@@ -1,10 +1,10 @@
 ---
 parse_incident_task:
-  description: 'Read the uploaded incident file at path {incident_file} using the
-    file read tool. Parse and normalize all contents: incident timestamp, severity
-    level, affected service, client name, environment, observed symptoms, initial
-    impact scope, and any error codes or log snippets. Infer any missing fields from
-    context within the file.'
+  description: 'Use the incident payload from {incident_text} as the source input.
+    Parse and normalize all contents: incident timestamp, severity level, affected
+    service, client name, environment, observed symptoms, initial impact scope,
+    and any error codes or log snippets. Infer any missing fields from context
+    within the provided text.'
   expected_output: 'A structured incident intake summary with fields: incident_id,
     client, environment, service, severity, symptoms, impact, timestamp.'
   agent: incident_intake_normalization_specialist

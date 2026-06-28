@@ -39,6 +39,16 @@ This command initializes the service_ops_incident_triage Crew, assembling the ag
 
 This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
 
+## AMP Input Pattern (No File Upload)
+
+This project is configured to accept incident content as text input (`incident_text`) instead of a local file path.  
+In CrewAI AMP, pass the incident payload directly in the trigger modal or via the API:
+
+- `GET /inputs` to confirm required fields
+- `POST /kickoff` with `{"inputs": {"incident_text": "<your incident text>"}}`
+
+This avoids file upload dependencies and works in AMP automations.
+
 ## Understanding Your Crew
 
 The service_ops_incident_triage Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.

@@ -12,7 +12,17 @@ def run():
     Run the crew.
     """
     inputs = {
-        'incident_file': 'sample_value'
+        "incident_text": (
+            "incident_id: INC-1001\n"
+            "timestamp: 2026-06-29T01:55:00+09:00\n"
+            "client: Acme Retail\n"
+            "environment: production\n"
+            "service: payment-api\n"
+            "severity: SEV-1\n"
+            "symptoms: elevated 5xx, payment timeout spikes\n"
+            "impact: checkout failures for KR users\n"
+            "error_codes: DB_CONN_TIMEOUT, UPSTREAM_504\n"
+        )
     }
     ServiceOpsIncidentTriageCrew().crew().kickoff(inputs=inputs)
 
@@ -21,9 +31,7 @@ def train():
     """
     Train the crew for a given number of iterations.
     """
-    inputs = {
-        'incident_file': 'sample_value'
-    }
+    inputs = {"incident_text": "sample incident payload"}
     try:
         ServiceOpsIncidentTriageCrew().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
 
@@ -44,9 +52,7 @@ def test():
     """
     Test the crew execution and returns the results.
     """
-    inputs = {
-        'incident_file': 'sample_value'
-    }
+    inputs = {"incident_text": "sample incident payload"}
     try:
         ServiceOpsIncidentTriageCrew().crew().test(n_iterations=int(sys.argv[1]), openai_model_name=sys.argv[2], inputs=inputs)
 

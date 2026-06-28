@@ -4,10 +4,7 @@ import os
 from crewai import LLM
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from crewai_tools import (
-	ExaSearchTool,
-	FileReadTool
-)
+from crewai_tools import ExaSearchTool
 
 
 
@@ -27,7 +24,7 @@ class ServiceOpsIncidentTriageCrew:
             config=self.agents_config["incident_intake_normalization_specialist"],
             
             
-            tools=[				FileReadTool()],
+            tools=[],
             
             reasoning=False,
             max_reasoning_attempts=None,
