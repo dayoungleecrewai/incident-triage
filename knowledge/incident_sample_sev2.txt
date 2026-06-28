@@ -1,0 +1,14 @@
+incident_id: INC-2026-0629-102
+timestamp: 2026-06-29T03:05:00+09:00
+client: Bluefin Bank
+environment: production
+service: auth-service
+severity: SEV-2
+symptoms: intermittent login failures, token refresh latency over 4s
+impact: around 12% of mobile users unable to sign in
+error_codes: REDIS_TIMEOUT, AUTH_429
+log_snippets:
+  - "2026-06-29T03:04:27Z auth-service ERROR REDIS_TIMEOUT session read timeout"
+  - "2026-06-29T03:04:31Z api-gateway WARN /auth/refresh returned 429"
+suspected_trigger: cache node saturation after batch campaign push notifications
+current_mitigation: increased cache pool size and enabled rate-limit bypass for trusted client IDs

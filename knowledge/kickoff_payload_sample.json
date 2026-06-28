@@ -1,0 +1,5 @@
+{
+  "inputs": {
+    "incident_text": "incident_id: INC-2026-0629-101\ntimestamp: 2026-06-29T02:20:00+09:00\nclient: Acme Retail\nenvironment: production\nservice: payment-api\nseverity: SEV-1\nsymptoms: elevated 5xx errors, checkout timeout spikes, retry storm from gateway\nimpact: checkout failures for KR users (~38% of transactions failing)\nerror_codes: DB_CONN_TIMEOUT, UPSTREAM_504\nlog_snippets:\n  - \"2026-06-29T02:19:41Z payment-api ERROR DB_CONN_TIMEOUT pool exhausted\"\n  - \"2026-06-29T02:19:44Z gateway WARN upstream timeout payment-api 504\"\nsuspected_trigger: traffic surge after midnight promotion + stale DB connection pool settings\ncurrent_mitigation: shifted 20% traffic to fallback region; error rate improving but unstable"
+  }
+}

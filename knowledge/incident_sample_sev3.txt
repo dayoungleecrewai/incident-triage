@@ -1,0 +1,14 @@
+incident_id: INC-2026-0629-103
+timestamp: 2026-06-29T04:15:00+09:00
+client: Nova Logistics
+environment: staging
+service: reporting-worker
+severity: SEV-3
+symptoms: nightly report generation delayed by 45 minutes
+impact: internal dashboard data freshness degraded; no customer-facing outage
+error_codes: JOB_QUEUE_BACKLOG, S3_RETRY
+log_snippets:
+  - "2026-06-29T04:12:09Z worker WARN queue depth exceeded threshold: 1800"
+  - "2026-06-29T04:13:54Z worker INFO upload retry succeeded on attempt 3"
+suspected_trigger: larger-than-usual ETL payload plus lower worker concurrency after maintenance
+current_mitigation: temporary worker scale-up from 4 to 8 and queue drain monitoring
