@@ -1,6 +1,3 @@
-import os
-
-from crewai import LLM
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import ExaSearchTool
@@ -14,28 +11,6 @@ from crewai_tools import ExaSearchTool
 class ServiceOpsIncidentTriageCrew:
     """ServiceOpsIncidentTriage crew"""
 
-    def _llm_from_connection(self) -> LLM:
-        """
-        Build LLM config from connection-style environment settings.
-        In AMP, prefer configuring model connection values (MODEL, optional
-        base URL/key) instead of relying on OPENAI_API_KEY directly.
-        """
-        model = os.getenv("MODEL") or os.getenv("OPENAI_MODEL_NAME") or "gpt-4o-mini"
-        base_url = os.getenv("MODEL_BASE_URL") or os.getenv("LITELLM_BASE_URL")
-        api_key = (
-            os.getenv("MODEL_API_KEY")
-            or os.getenv("LITELLM_API_KEY")
-            or os.getenv("API_KEY")
-        )
-
-        llm_kwargs = {"model": model}
-        if base_url:
-            llm_kwargs["base_url"] = base_url
-        if api_key:
-            llm_kwargs["api_key"] = api_key
-
-        return LLM(**llm_kwargs)
-
     @agent
     def incident_intake_normalization_specialist(self) -> Agent:
         return Agent(
@@ -48,7 +23,6 @@ class ServiceOpsIncidentTriageCrew:
             max_iter=25,
             max_rpm=None,
             max_execution_time=None,
-            llm=self._llm_from_connection(),
         )
 
     @agent
@@ -63,7 +37,6 @@ class ServiceOpsIncidentTriageCrew:
             max_iter=25,
             max_rpm=None,
             max_execution_time=None,
-            llm=self._llm_from_connection(),
         )
 
     @agent
@@ -78,7 +51,6 @@ class ServiceOpsIncidentTriageCrew:
             max_iter=25,
             max_rpm=None,
             max_execution_time=None,
-            llm=self._llm_from_connection(),
         )
 
     @agent
@@ -93,7 +65,6 @@ class ServiceOpsIncidentTriageCrew:
             max_iter=25,
             max_rpm=None,
             max_execution_time=None,
-            llm=self._llm_from_connection(),
         )
 
     @agent
@@ -108,7 +79,6 @@ class ServiceOpsIncidentTriageCrew:
             max_iter=25,
             max_rpm=None,
             max_execution_time=None,
-            llm=self._llm_from_connection(),
         )
 
     @task
@@ -155,5 +125,4 @@ class ServiceOpsIncidentTriageCrew:
             tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
-            chat_llm=self._llm_from_connection(),
         )
