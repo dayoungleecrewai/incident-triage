@@ -7,24 +7,38 @@ from service_ops_incident_triage.crew import ServiceOpsIncidentTriageCrew
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
 
-def run():
+DEFAULT_INCIDENT_TEXT = (
+    "incident_id: INC-1001\n"
+    "timestamp: 2026-06-29T01:55:00+09:00\n"
+    "client: Acme Retail\n"
+    "environment: production\n"
+    "service: payment-api\n"
+    "severity: SEV-1\n"
+    "symptoms: elevated 5xx, payment timeout spikes\n"
+    "impact: checkout failures for KR users\n"
+    "error_codes: DB_CONN_TIMEOUT, UPSTREAM_504\n"
+)
+
+
+def run(inputs: dict | None = None):
     """
     Run the crew.
     """
-    inputs = {
-        "incident_text": (
-            "incident_id: INC-1001\n"
-            "timestamp: 2026-06-29T01:55:00+09:00\n"
-            "client: Acme Retail\n"
-            "environment: production\n"
-            "service: payment-api\n"
-            "severity: SEV-1\n"
-            "symptoms: elevated 5xx, payment timeout spikes\n"
-            "impact: checkout failures for KR users\n"
-            "error_codes: DB_CONN_TIMEOUT, UPSTREAM_504\n"
-        )
-    }
-    ServiceOpsIncidentTriageCrew().crew().kickoff(inputs=inputs)
+    resolved_inputs = inputs or {"incident_text": DEFAULT_INCIDENT_TEXT}
+    return ServiceOpsIncidentTriageCrew().crew().kickoff(inputs=resolved_inputs)
+
+
+def run_with_trigger(crewai_trigger_payload: dict | None = None):
+    """
+    Run the crew using AMP trigger payload.
+    """
+    payload = crewai_trigger_payload or {}
+
+    incident_text = payload.get("incident_text")
+    if not incident_text:
+        incident_text = DEFAULT_INCIDENT_TEXT
+
+    return run(inputs={"incident_text": incident_text})
 
 
 def train():
