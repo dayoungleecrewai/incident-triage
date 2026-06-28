@@ -1,0 +1,49 @@
+---
+parse_incident_task:
+  description: 'Read the uploaded incident file at path {incident_file} using the
+    file read tool. Parse and normalize all contents: incident timestamp, severity
+    level, affected service, client name, environment, observed symptoms, initial
+    impact scope, and any error codes or log snippets. Infer any missing fields from
+    context within the file.'
+  expected_output: 'A structured incident intake summary with fields: incident_id,
+    client, environment, service, severity, symptoms, impact, timestamp.'
+  agent: incident_intake_normalization_specialist
+diagnose_incident_task:
+  description: Using the normalized incident intake, diagnose the root cause(s) of
+    the incident. Search for known issues, CVEs, or related failure patterns where
+    applicable. Assess urgency and blast radius based on the affected service and
+    environment identified in the intake.
+  expected_output: 'A diagnosis report including: probable_root_causes (ranked), blast_radius,
+    urgency (P1–P4), supporting_evidence, and recommended_investigation_steps.'
+  agent: senior_site_reliability_diagnostician
+  context:
+  - parse_incident_task
+policy_check_remediation_task:
+  description: 'Based on the diagnosis, produce a detailed remediation plan for the
+    incident. Validate each action against operational policies: change freeze schedules,
+    rollback availability, blast radius thresholds, and SLA windows. Flag any policy
+    conflicts. Use the client and service details from the intake summary.'
+  expected_output: 'A policy-checked remediation plan with: remediation_steps (ordered),
+    policy_checks (pass/fail per step), rollback_plan, estimated_resolution_time,
+    and policy_conflicts (if any).'
+  agent: remediation_runbook_policy_analyst
+  context:
+  - diagnose_incident_task
+human_approval_task:
+  description: Review the incident diagnosis and policy-checked remediation plan.
+    You must explicitly approve or reject the plan, and optionally modify steps. Your
+    decision will gate all subsequent production actions.
+  expected_output: 'Human approval decision including: decision (approved/rejected/modified),
+    approver_notes, approved_steps (final list), and approval_timestamp.'
+  agent: on_call_engineer_approval_gate
+  context:
+  - policy_check_remediation_task
+generate_incident_record_task:
+  description: 'Compile the complete incident record into a single structured JSON
+    document. Include all phases: intake summary, diagnosis, remediation plan, and
+    human approval outcome.'
+  expected_output: 'A valid, well-structured JSON incident record with top-level keys:
+    incident_meta, diagnosis, remediation_plan, approval, and audit_trail.'
+  agent: incident_record_audit_compiler
+  context:
+  - human_approval_task
