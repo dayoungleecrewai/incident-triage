@@ -21,10 +21,14 @@ class ServiceOpsIncidentTriageCrew:
         Resolve model configuration from AMP/connection environment variables.
         No OpenAI default fallback is used.
         """
-        model = os.getenv("MODEL") or os.getenv("OPENAI_MODEL_NAME")
+        model = (
+            os.getenv("MODEL")
+            or os.getenv("LITELLM_MODEL")
+            or os.getenv("CREWAI_MODEL")
+        )
         if not model:
             raise ValueError(
-                "No model connection found. Set MODEL (or OPENAI_MODEL_NAME) in AMP deployment configuration."
+                "No model connection found. Set MODEL (or LITELLM_MODEL/CREWAI_MODEL) in AMP deployment configuration."
             )
 
         llm_kwargs = {"model": model}

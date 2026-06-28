@@ -20,7 +20,8 @@ crewai install
 ```
 ### Customizing
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+For AMP deployments, configure a model connection (for example `MODEL`) in the deployment environment.
+Do not rely on local `.env` OpenAI key defaults.
 
 - Modify `src/service_ops_incident_triage/config/agents.yaml` to define your agents
 - Modify `src/service_ops_incident_triage/config/tasks.yaml` to define your tasks
