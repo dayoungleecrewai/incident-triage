@@ -1,6 +1,7 @@
+import os
 from typing import List
 
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, LLM, Process, Task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.project import CrewBase, agent, crew, task
 
@@ -15,6 +16,31 @@ class ServiceOpsIncidentTriageCrew:
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
 
+    def _amp_llm(self) -> LLM:
+        """
+        Resolve model configuration from AMP/connection environment variables.
+        No OpenAI default fallback is used.
+        """
+        model = os.getenv("MODEL") or os.getenv("OPENAI_MODEL_NAME")
+        if not model:
+            raise ValueError(
+                "No model connection found. Set MODEL (or OPENAI_MODEL_NAME) in AMP deployment configuration."
+            )
+
+        llm_kwargs = {"model": model}
+        base_url = os.getenv("MODEL_BASE_URL") or os.getenv("LITELLM_BASE_URL")
+        api_key = (
+            os.getenv("MODEL_API_KEY")
+            or os.getenv("LITELLM_API_KEY")
+            or os.getenv("API_KEY")
+        )
+        if base_url:
+            llm_kwargs["base_url"] = base_url
+        if api_key:
+            llm_kwargs["api_key"] = api_key
+
+        return LLM(**llm_kwargs)
+
     @agent
     def incident_intake_normalization_specialist(self) -> Agent:
         return Agent(
@@ -22,6 +48,7 @@ class ServiceOpsIncidentTriageCrew:
             allow_delegation=False,
             inject_date=True,
             verbose=True,
+            llm=self._amp_llm(),
         )
 
     @agent
@@ -31,6 +58,7 @@ class ServiceOpsIncidentTriageCrew:
             allow_delegation=False,
             inject_date=True,
             verbose=True,
+            llm=self._amp_llm(),
         )
 
     @agent
@@ -40,6 +68,7 @@ class ServiceOpsIncidentTriageCrew:
             allow_delegation=False,
             inject_date=True,
             verbose=True,
+            llm=self._amp_llm(),
         )
 
     @agent
@@ -49,6 +78,7 @@ class ServiceOpsIncidentTriageCrew:
             allow_delegation=False,
             inject_date=True,
             verbose=True,
+            llm=self._amp_llm(),
         )
 
     @agent
@@ -58,6 +88,7 @@ class ServiceOpsIncidentTriageCrew:
             allow_delegation=False,
             inject_date=True,
             verbose=True,
+            llm=self._amp_llm(),
         )
 
     @task
@@ -98,4 +129,5 @@ class ServiceOpsIncidentTriageCrew:
             tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
+            chat_llm=self._amp_llm(),
         )
