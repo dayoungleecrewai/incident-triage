@@ -68,7 +68,12 @@ def test():
     """
     inputs = {"incident_text": "sample incident payload"}
     try:
-        ServiceOpsIncidentTriageCrew().crew().test(n_iterations=int(sys.argv[1]), openai_model_name=sys.argv[2], inputs=inputs)
+        model_name = sys.argv[2] if len(sys.argv) > 2 else None
+        ServiceOpsIncidentTriageCrew().crew().test(
+            n_iterations=int(sys.argv[1]),
+            model_name=model_name,
+            inputs=inputs,
+        )
 
     except Exception as e:
         raise Exception(f"An error occurred while testing the crew: {e}")
